@@ -34,6 +34,16 @@ struct ServeIndicatorView: View {
     ServeIndicatorView(serve: serve)
 }
 
+#Preview("Us, ADV") {
+    let serve = ServeState(servingTeam: .us, serverIndex: 0, side: .advantage)
+    ServeIndicatorView(serve: serve)
+}
+
+#Preview("Them, DEUCE") {
+    let serve = ServeState(servingTeam: .them, serverIndex: 0, side: .deuce)
+    ServeIndicatorView(serve: serve)
+}
+
 #Preview("Them, ADV") {
     let serve = ServeState(servingTeam: .them, serverIndex: 0, side: .advantage)
     ServeIndicatorView(serve: serve)
