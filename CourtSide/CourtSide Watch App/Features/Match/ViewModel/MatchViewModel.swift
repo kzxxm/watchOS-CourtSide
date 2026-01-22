@@ -8,12 +8,13 @@
 import Foundation
 import Observation
 
-@MainActor
-final class MatchViewModel: Observable {
+@Observable
+final class MatchViewModel {
     
     // MARK: - Published state (read-only values)
     private(set) var match: MatchScore
     private(set) var serve: ServeState
+    var swapPositions: Bool = false
     
     // MARK: - Settings
     // TODO: Integrate UserDefaults
@@ -124,6 +125,7 @@ final class MatchViewModel: Observable {
     
     private func rotateServer() {
         serve = ServeRules.nextServer(afterGame: serve)
+        swapPositions.toggle()
     }
     
     // MARK: - Convenience accessors
