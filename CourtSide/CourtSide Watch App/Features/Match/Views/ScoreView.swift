@@ -53,8 +53,9 @@ struct ScoreView: View {
         VStack(spacing: 6) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(.gray.opacity(0.2))
+                    .fill((team == .us ? Color.blue : Color.orange).opacity(0.2))
                     .frame(height: 80)
+
                 
                 VStack {
                     Text(team == .us ? "US" : "THEM")
