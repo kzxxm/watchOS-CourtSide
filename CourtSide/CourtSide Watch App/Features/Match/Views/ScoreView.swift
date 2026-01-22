@@ -31,6 +31,11 @@ struct ScoreView: View {
                         .onTapGesture(perform: onThemPoint)
                 }
             }
+            .rotation3DEffect(
+                .degrees(swapPositions ? 360 : 0),
+                axis: (x: -1, y: 0, z: 0)
+            )
+            .animation(.interactiveSpring(duration: 0.8), value: swapPositions)
 
             // Undo button
             Button {
@@ -49,7 +54,8 @@ struct ScoreView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.gray.opacity(0.2))
-                    .frame(height: 100)
+                    .frame(height: 80)
+                
                 VStack {
                     Text(team == .us ? "US" : "THEM")
                         .font(.caption2)
@@ -58,6 +64,7 @@ struct ScoreView: View {
                     Text("\(gameScore(for: team))")
                         .font(.title)
                         .fontWeight(.bold)
+                        .animation(.linear)
                 }
             }
         }

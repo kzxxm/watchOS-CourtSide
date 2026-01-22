@@ -17,9 +17,6 @@ struct ServeIndicatorView: View {
                 .frame(width: 10, height: 10)
                 .opacity(0.7)
             
-//            Text("Server position: ")
-//                .font(.caption)
-            
             Image(systemName: serve.arrow(for: serve.side))
                 .font(.body)
                 .fontWeight(.bold)
