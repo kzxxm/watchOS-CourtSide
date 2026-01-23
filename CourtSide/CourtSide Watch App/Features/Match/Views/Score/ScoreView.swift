@@ -21,14 +21,10 @@ struct ScoreView: View {
             HStack(spacing: 12) {
                 if swapPositions {
                     scoreTile(for: .them)
-                        .onTapGesture(perform: onThemPoint)
                     scoreTile(for: .us)
-                        .onTapGesture(perform: onUsPoint)
                 } else {
                     scoreTile(for: .us)
-                        .onTapGesture(perform: onUsPoint)
                     scoreTile(for: .them)
-                        .onTapGesture(perform: onThemPoint)
                 }
             }
             .rotation3DEffect(
@@ -41,9 +37,16 @@ struct ScoreView: View {
             Button {
                 onUndo()
             } label: {
-                Text("Undo")
-                    .font(.caption)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.red.opacity(0.25))
+                        .frame(height: 44)
+                    Text("Undo")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
             }
+            .buttonStyle(.plain)
             .tint(.red)
         }
     }
@@ -51,22 +54,28 @@ struct ScoreView: View {
     // MARK: - Helpers
     private func scoreTile(for team: Team) -> some View {
         VStack(spacing: 6) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill((team == .us ? Color.blue : Color.orange).opacity(0.2))
-                    .frame(height: 80)
-
-                VStack {
-                    Text(team == .us ? "US" : "THEM")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+            Button {
+                team == .us ? onUsPoint() : onThemPoint()
+            } label: {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill((team == .us ? Color.blue : Color.orange).opacity(0.2))
+                        .frame(height: 80)
                     
-                    Text("\(gameScore(for: team))")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .animation(.linear)
+                    VStack {
+                        Text(team == .us ? "US" : "THEM")
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(team == .us ? Color.blue : Color.orange)
+                        
+                        Text("\(gameScore(for: team))")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .animation(.linear)
+                    }
                 }
             }
+            .buttonStyle(.plain)
         }
     }
     
