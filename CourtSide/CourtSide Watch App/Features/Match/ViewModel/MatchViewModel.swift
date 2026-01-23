@@ -14,8 +14,9 @@ final class MatchViewModel {
     // MARK: - Published state (read-only values)
     private(set) var match: MatchScore
     private(set) var serve: ServeState
+    private(set) var setWinner: Team? = nil
+    private(set) var showSetSummary = false
     var gameWinner: Team? = nil
-    var setWinner: Team? = nil
     var swapPositions: Bool = false
     
     // MARK: - Settings
@@ -25,6 +26,16 @@ final class MatchViewModel {
     
     // MARK: - Undo history
     private var history: [(MatchScore, ServeState)] = []
+    
+    // MARK: - Completed Sets (for summary view)
+    var completedSets: [SetScore] {
+        let sets = match.sets
+        // Exclude the current (incomplete) set
+        if let lastSet = sets.last, lastSet.us == 0 && lastSet.them == 0 {
+            return Array(sets.dropLast())
+        }
+        return sets
+    }
     
     // MARK: - Init
     init(
@@ -79,6 +90,11 @@ final class MatchViewModel {
     
     func dismissSetWinner() {
         setWinner = nil
+        showSetSummary = true
+    }
+    
+    func dismissSetSummary() {
+        showSetSummary = false
     }
     
     // MARK: - Helpers

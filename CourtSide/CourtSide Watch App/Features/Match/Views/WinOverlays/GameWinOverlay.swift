@@ -23,7 +23,7 @@ struct GameWinOverlay: View {
             // "GAME" text
             VStack(spacing: 20) {
                 Text("GAME")
-                    .font(.system(size: 60, weight: .black))
+                    .font(.system(size: 40, weight: .black))
                     .foregroundStyle(.white)
                     .scaleEffect(scale)
                     .rotationEffect(.degrees(rotation))

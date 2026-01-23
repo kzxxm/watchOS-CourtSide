@@ -45,6 +45,16 @@ struct MatchView: View {
                 }
             }
         }
+        
+        .sheet(isPresented: Binding(
+            get: { viewModel.showSetSummary },
+            set: { if !$0 { viewModel.dismissSetSummary() } }
+        )) {
+            SetSummaryView(
+                completedSets: viewModel.completedSets,
+                onContinue: viewModel.dismissSetSummary
+            )
+        }
     }
 }
 
