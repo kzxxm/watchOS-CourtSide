@@ -14,6 +14,8 @@ final class MatchViewModel {
     // MARK: - Published state (read-only values)
     private(set) var match: MatchScore
     private(set) var serve: ServeState
+    var gameWinner: Team? = nil
+    var setWinner: Team? = nil
     var swapPositions: Bool = false
     
     // MARK: - Settings
@@ -71,6 +73,14 @@ final class MatchViewModel {
         )
     }
     
+    func dismissGameWinner() {
+        gameWinner = nil
+    }
+    
+    func dismissSetWinner() {
+        setWinner = nil
+    }
+    
     // MARK: - Helpers
     private func saveSnapshot() {
         history.append((match, serve))
@@ -90,6 +100,14 @@ final class MatchViewModel {
     }
     
     private func gameWon(by team: Team) {
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(0.5))
+            gameWinner = team
+
+            try? await Task.sleep(for: .seconds(3))
+            dismissGameWinner()
+        }
+        
         resetGamePoints()
         incrementGame(for: team)
         rotateServer()
@@ -104,6 +122,7 @@ final class MatchViewModel {
     }
     
     private func setWon(by team: Team) {
+        setWinner = team
         match.sets.append(SetScore())
     }
     

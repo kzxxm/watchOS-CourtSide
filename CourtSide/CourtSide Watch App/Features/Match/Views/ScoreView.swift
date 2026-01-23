@@ -56,7 +56,6 @@ struct ScoreView: View {
                     .fill((team == .us ? Color.blue : Color.orange).opacity(0.2))
                     .frame(height: 80)
 
-                
                 VStack {
                     Text(team == .us ? "US" : "THEM")
                         .font(.caption2)
