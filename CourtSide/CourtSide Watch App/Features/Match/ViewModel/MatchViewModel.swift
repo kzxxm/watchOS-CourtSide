@@ -16,6 +16,7 @@ final class MatchViewModel {
     private(set) var serve: ServeState
     private(set) var setWinner: Team? = nil
     private(set) var showSetSummary = false
+    private(set) var needsServeSelection = true
     var gameWinner: Team? = nil
     var swapPositions: Bool = false
     
@@ -68,6 +69,15 @@ final class MatchViewModel {
         }
     }
     
+    func selectInitialServer(team: Team) {
+        serve = ServeState(
+            servingTeam: team,
+            serverIndex: 0,
+            side: .deuce
+        )
+        needsServeSelection = false
+    }
+    
     func undo() {
         guard let last = history.popLast() else { return }
         match = last.0
@@ -82,6 +92,7 @@ final class MatchViewModel {
             serverIndex: 0,
             side: .deuce
         )
+        needsServeSelection = true
     }
     
     func dismissGameWinner() {
@@ -95,6 +106,7 @@ final class MatchViewModel {
     
     func dismissSetSummary() {
         showSetSummary = false
+        needsServeSelection = true
     }
     
     // MARK: - Helpers

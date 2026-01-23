@@ -16,16 +16,15 @@ struct ServeIndicatorView: View {
                 .font(.footnote)
                 .frame(width: 10, height: 10)
                 .opacity(0.7)
-            
+                                    
             Image(systemName: serve.arrow(for: serve.side))
                 .font(.body)
                 .fontWeight(.bold)
                 .contentTransition(.symbolEffect(.replace))
+            
         }
-        .padding(.horizontal, 10)
+        .padding(.horizontal, 20)
         .padding(.vertical, 4)
-//        .background(.gray.opacity(0.3))
-//        .clipShape(Capsule())
     }
 }
 

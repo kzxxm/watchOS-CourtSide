@@ -33,6 +33,17 @@ struct MatchView: View {
                     .zIndex(1)
                     .onTapGesture(perform: viewModel.dismissGameWinner)
             }
+            
+            // Serve selection overlay at start
+            if viewModel.needsServeSelection {
+                ServeSelectionView { team in
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                        viewModel.selectInitialServer(team: team)
+                    }
+                }
+                .transition(.opacity)
+                .zIndex(2)
+            }
         }
         // Manual-dismiss set win overlay
         .fullScreenCover(isPresented: Binding(

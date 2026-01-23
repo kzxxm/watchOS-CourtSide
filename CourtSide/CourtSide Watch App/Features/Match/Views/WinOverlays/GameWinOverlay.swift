@@ -21,7 +21,7 @@ struct GameWinOverlay: View {
                 .opacity(opacity * 0.95)
             
             // "GAME" text
-            VStack(spacing: 20) {
+            VStack(spacing: 0) {
                 Text("GAME")
                     .font(.system(size: 40, weight: .black))
                     .foregroundStyle(.white)
