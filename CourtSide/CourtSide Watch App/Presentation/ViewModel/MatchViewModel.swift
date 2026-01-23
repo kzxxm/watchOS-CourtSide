@@ -131,6 +131,7 @@ final class MatchViewModel {
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(0.5))
             gameWinner = team
+            HapticManager.gameWin()
 
             try? await Task.sleep(for: .seconds(3))
             dismissGameWinner()
@@ -151,6 +152,7 @@ final class MatchViewModel {
     
     private func setWon(by team: Team) {
         setWinner = team
+        HapticManager.setWin()
         match.sets.append(SetScore())
     }
     
