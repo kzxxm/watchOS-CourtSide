@@ -17,10 +17,8 @@ struct UndoResetButton: View {
     
     var body: some View {
         Button {
-            // Tap action - undo
             onUndo()
-            // Haptic feedback for undo
-            WKInterfaceDevice.current().play(.click)
+            HapticsManager.undo()
         } label: {
             ZStack {
                 Circle()
@@ -71,6 +69,7 @@ struct UndoResetButton: View {
         ) {
             Button("Reset Match", role: .destructive) {
                 onReset()
+                HapticsManager.reset()
             }
             Button("Cancel", role: .cancel) {}
         } message: {

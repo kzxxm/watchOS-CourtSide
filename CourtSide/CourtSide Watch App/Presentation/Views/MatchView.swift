@@ -13,10 +13,11 @@ struct MatchView: View {
     var body: some View {
         ZStack {
             VStack {
-//                HStack {
-//                    Image(systemName: "gearshape")
-//                    Spacer()
-//                }
+                HStack {
+                    // TODO: Implement SettingsView (see comments in placeholder file)
+                    SettingsButton(onSettings: {})
+                    Spacer()
+                }
                 
                 SetScoreView(match: viewModel.match)
                 
