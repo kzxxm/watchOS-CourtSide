@@ -79,7 +79,7 @@ struct ScoreView: View {
                         Spacer()
                         
                         Text("\(gameScore(for: team))")
-                            .font(.system(size: 40))
+                            .font(.largeTitle)
                             .fontWeight(.bold)
                             .animation(.linear)
                         
