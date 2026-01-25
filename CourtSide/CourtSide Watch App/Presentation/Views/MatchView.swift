@@ -21,7 +21,7 @@ struct MatchView: View {
                     onUndo: { viewModel.undo() },
                     match: viewModel.match,
                     swapPositions: viewModel.swapPositions,
-                    goldenPointEnabled: viewModel.goldenPointEnabled
+                    goldenPointEnabled: viewModel.settings.goldenPointEnabled
                 )
                 
                 ServeIndicatorView(serve: viewModel.serve)

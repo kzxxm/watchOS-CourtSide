@@ -330,7 +330,7 @@ final class MatchViewModel {
 // MARK: - Convenience Extensions
 
 extension MatchViewModel {
-    /// Convenience initializer for testing
+    // Convenience initializer for testing
     convenience init(
         goldenPointEnabled: Bool = false,
         tieBreakEnabled: Bool = false
