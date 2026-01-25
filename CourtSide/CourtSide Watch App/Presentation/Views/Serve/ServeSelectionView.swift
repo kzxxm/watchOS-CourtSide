@@ -59,6 +59,7 @@ struct ServeSelectionView: View {
                         VStack(spacing: 8) {
                             Image(systemName: "figure.tennis")
                                 .font(.system(size: 30))
+                                .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
                             Text("THEM")
                                 .font(.headline)
                         }

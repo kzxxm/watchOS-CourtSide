@@ -20,6 +20,15 @@ class HapticsManager {
     static func setWin() {
         WKInterfaceDevice.current().play(.success)
         print("(HapticManager) Set completion haptic triggered")
-
+    }
+    
+    static func undo() {
+        WKInterfaceDevice.current().play(.retry)
+        print("(HapticManager) Undo haptic triggered")
+    }
+    
+    static func reset() {
+        WKInterfaceDevice.current().play(.failure)
+        print("(HapticManager) Reset haptic triggered")
     }
 }

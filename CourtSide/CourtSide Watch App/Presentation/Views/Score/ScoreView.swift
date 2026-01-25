@@ -35,21 +35,6 @@ struct ScoreView: View {
             )
             .animation(.interactiveSpring(duration: 0.8), value: swapPositions)
 
-            // Undo button
-            Button {
-                onUndo()
-            } label: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(.red.opacity(0.25))
-                        .frame(height: 44)
-                    Text("Undo")
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                }
-            }
-            .buttonStyle(.plain)
-            .tint(.red)
         }
     }
     

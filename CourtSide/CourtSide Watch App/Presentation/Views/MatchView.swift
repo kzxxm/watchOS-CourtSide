@@ -13,6 +13,11 @@ struct MatchView: View {
     var body: some View {
         ZStack {
             VStack {
+//                HStack {
+//                    Image(systemName: "gearshape")
+//                    Spacer()
+//                }
+                
                 SetScoreView(match: viewModel.match)
                 
                 ScoreView(
@@ -23,6 +28,12 @@ struct MatchView: View {
                     serve: viewModel.serve,
                     swapPositions: viewModel.swapPositions,
                     goldenPointEnabled: viewModel.settings.goldenPointEnabled
+                )
+                
+                UndoResetButton(
+                    onUndo: viewModel.undo,
+                    onReset: viewModel.resetMatch,
+                    canUndo: viewModel.canUndo
                 )
             }
             
