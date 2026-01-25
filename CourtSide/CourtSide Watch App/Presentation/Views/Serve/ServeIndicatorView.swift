@@ -16,7 +16,11 @@ struct ServeIndicatorView: View {
                 .font(.footnote)
                 .frame(width: 10, height: 10)
                 .opacity(0.7)
-                                    
+            
+            Spacer()
+                          
+            Text(serve.servingTeam == .us ? "US" : "THEM")
+            
             Image(systemName: serve.arrow(for: serve.side))
                 .font(.body)
                 .fontWeight(.bold)

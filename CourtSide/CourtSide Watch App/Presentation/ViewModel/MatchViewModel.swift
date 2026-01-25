@@ -7,30 +7,158 @@
 
 import Foundation
 import Observation
+import SwiftUI
+
+// MARK: - Match State (Pure Data)
+
+struct MatchState {
+    var score: MatchScore
+    var serve: ServeState
+    var history: [(MatchScore, ServeState)]
+    
+    init(
+        score: MatchScore = MatchScore(),
+        serve: ServeState = ServeState(servingTeam: .us, serverIndex: 0, side: .deuce),
+        history: [(MatchScore, ServeState)] = []
+    ) {
+        self.score = score
+        self.serve = serve
+        self.history = history
+    }
+    
+    mutating func saveSnapshot() {
+        history.append((score, serve))
+        // Limit history size to prevent memory issues
+        if history.count > 50 {
+            history.removeFirst()
+        }
+    }
+    
+    mutating func restoreLastSnapshot() -> Bool {
+        guard let last = history.popLast() else { return false }
+        score = last.0
+        serve = last.1
+        return true
+    }
+    
+    mutating func reset() {
+        score = MatchScore()
+        serve = ServeState(servingTeam: .us, serverIndex: 0, side: .deuce)
+        history.removeAll()
+    }
+}
+
+// MARK: - Presentation State (UI-specific)
+
+struct PresentationState {
+    var gameWinner: Team?
+    var setWinner: Team?
+    var showSetSummary: Bool
+    var needsServeSelection: Bool
+    
+    init(
+        gameWinner: Team? = nil,
+        setWinner: Team? = nil,
+        showSetSummary: Bool = false,
+        needsServeSelection: Bool = true
+    ) {
+        self.gameWinner = gameWinner
+        self.setWinner = setWinner
+        self.showSetSummary = showSetSummary
+        self.needsServeSelection = needsServeSelection
+    }
+    
+    mutating func dismissGameWinner() {
+        gameWinner = nil
+    }
+    
+    mutating func showSetWinner(_ team: Team) {
+        setWinner = team
+    }
+    
+    mutating func dismissSetWinner() {
+        setWinner = nil
+        showSetSummary = true
+    }
+    
+    mutating func dismissSetSummary() {
+        showSetSummary = false
+        needsServeSelection = true
+    }
+    
+    mutating func completeServeSelection() {
+        needsServeSelection = false
+    }
+}
+
+// MARK: - Settings
+
+@Observable
+final class MatchSettings {
+    var goldenPointEnabled: Bool
+    var tieBreakEnabled: Bool
+    
+    init(goldenPointEnabled: Bool = false, tieBreakEnabled: Bool = false) {
+        self.goldenPointEnabled = goldenPointEnabled
+        self.tieBreakEnabled = tieBreakEnabled
+    }
+    
+    // Future: Add UserDefaults integration
+    // @ObservationIgnored
+    // @AppStorage("goldenPointEnabled") var goldenPointEnabled = false
+}
+
+// MARK: - Animation Timings
+
+private enum AnimationTimings {
+    static let preWinDelay: Duration = .seconds(0.5)
+    static let winDisplayDuration: Duration = .seconds(3)
+}
+
+// MARK: - Main ViewModel
 
 @Observable
 final class MatchViewModel {
     
-    // MARK: - Published state (read-only values)
-    private(set) var match: MatchScore
-    private(set) var serve: ServeState
-    private(set) var setWinner: Team? = nil
-    private(set) var showSetSummary = false
-    private(set) var needsServeSelection = true
-    var gameWinner: Team? = nil
+    // MARK: - State
+    private(set) var matchState: MatchState
+    private(set) var presentationState: PresentationState
+    let settings: MatchSettings
+    
+    // MARK: - Computed Properties (Public API)
+    
+    var match: MatchScore {
+        matchState.score
+    }
+    
+    var serve: ServeState {
+        matchState.serve
+    }
+    
+    var gameWinner: Team? {
+        presentationState.gameWinner
+    }
+    
+    var setWinner: Team? {
+        presentationState.setWinner
+    }
+    
+    var showSetSummary: Bool {
+        presentationState.showSetSummary
+    }
+    
+    var needsServeSelection: Bool {
+        presentationState.needsServeSelection
+    }
+    
+    var canUndo: Bool {
+        !matchState.history.isEmpty
+    }
+    
     var swapPositions: Bool = false
     
-    // MARK: - Settings
-    // TODO: Integrate UserDefaults
-    let goldenPointEnabled: Bool
-    let tieBreakEnabled: Bool
-    
-    // MARK: - Undo history
-    private var history: [(MatchScore, ServeState)] = []
-    
-    // MARK: - Completed Sets (for summary view)
     var completedSets: [SetScore] {
-        let sets = match.sets
+        let sets = matchState.score.sets
         // Exclude the current (incomplete) set
         if let lastSet = sets.last, lastSet.us == 0 && lastSet.them == 0 {
             return Array(sets.dropLast())
@@ -38,151 +166,179 @@ final class MatchViewModel {
         return sets
     }
     
+    // MARK: - Private Task Management
+    
+    private var gameWinTask: Task<Void, Never>?
+    
     // MARK: - Init
+    
     init(
-        goldenPointEnabled: Bool = false,
-        tieBreakEnabled: Bool = false
+        settings: MatchSettings = MatchSettings(),
+        matchState: MatchState = MatchState(),
+        presentationState: PresentationState = PresentationState()
     ) {
-        self.goldenPointEnabled = goldenPointEnabled
-        self.tieBreakEnabled = tieBreakEnabled
-        self.match = MatchScore()
-        self.serve = ServeState(
-            servingTeam: .us,
-            serverIndex: 0,
-            side: .deuce
-        )
+        self.settings = settings
+        self.matchState = matchState
+        self.presentationState = presentationState
     }
     
-    // MARK: - Public intents
+    deinit {
+        gameWinTask?.cancel()
+    }
+    
+    // MARK: - Public Intents
+    
     func pointWon(by team: Team) {
-        saveSnapshot()
+        matchState.saveSnapshot()
         incrementPoint(for: team)
         
-        if let gameWinner = GameRules.gameWinner(
-            usPoints: match.currentGame.us,
-            themPoints: match.currentGame.them,
-            goldenPointEnabled: goldenPointEnabled
+        if let winner = GameRules.gameWinner(
+            usPoints: matchState.score.currentGame.us,
+            themPoints: matchState.score.currentGame.them,
+            goldenPointEnabled: settings.goldenPointEnabled
         ) {
-            gameWon(by: gameWinner)
+            gameWon(by: winner)
         } else {
             updateServeSide()
         }
     }
     
     func selectInitialServer(team: Team) {
-        serve = ServeState(
+        matchState.serve = ServeState(
             servingTeam: team,
             serverIndex: 0,
             side: .deuce
         )
-        needsServeSelection = false
+        presentationState.completeServeSelection()
     }
     
     func undo() {
-        guard let last = history.popLast() else { return }
-        match = last.0
-        serve = last.1
+        _ = matchState.restoreLastSnapshot()
     }
     
     func resetMatch() {
-        history.removeAll()
-        match = MatchScore()
-        serve = ServeState(
-            servingTeam: .us,
-            serverIndex: 0,
-            side: .deuce
-        )
-        needsServeSelection = true
+        gameWinTask?.cancel()
+        matchState.reset()
+        presentationState = PresentationState()
+        swapPositions = false
     }
     
     func dismissGameWinner() {
-        gameWinner = nil
+        presentationState.dismissGameWinner()
     }
     
     func dismissSetWinner() {
-        setWinner = nil
-        showSetSummary = true
+        presentationState.dismissSetWinner()
     }
     
     func dismissSetSummary() {
-        showSetSummary = false
-        needsServeSelection = true
+        presentationState.dismissSetSummary()
     }
     
-    // MARK: - Helpers
-    private func saveSnapshot() {
-        history.append((match, serve))
-    }
+    // MARK: - Private Game Logic
     
     private func incrementPoint(for team: Team) {
         switch team {
         case .us:
-            match.currentGame.us += 1
+            matchState.score.currentGame.us += 1
         case .them:
-            match.currentGame.them += 1
+            matchState.score.currentGame.them += 1
         }
     }
     
     private func updateServeSide() {
-        serve.side = ServeRules.nextSide(current: serve.side)
+        matchState.serve.side = ServeRules.nextSide(current: matchState.serve.side)
     }
     
     private func gameWon(by team: Team) {
-        Task { @MainActor in
-            try? await Task.sleep(for: .seconds(0.5))
-            gameWinner = team
-            HapticManager.gameWin()
-
-            try? await Task.sleep(for: .seconds(3))
-            dismissGameWinner()
+        // Cancel any existing game win animation
+        gameWinTask?.cancel()
+        
+        // Start new game win sequence
+        gameWinTask = Task { @MainActor in
+            do {
+                try await Task.sleep(for: AnimationTimings.preWinDelay)
+                guard !Task.isCancelled else { return }
+                
+                presentationState.gameWinner = team
+                HapticsManager.gameWin()
+                
+                try await Task.sleep(for: AnimationTimings.winDisplayDuration)
+                guard !Task.isCancelled else { return }
+                
+                dismissGameWinner()
+            } catch {
+                // Task cancelled or other error - gracefully exit
+            }
         }
         
+        // Update game state
         resetGamePoints()
         incrementGame(for: team)
         rotateServer()
         
+        // Check for set win
         if let setWinner = SetRules.setWinner(
             usGames: currentSet.us,
             themGames: currentSet.them,
-            tieBreakEnabled: tieBreakEnabled
+            tieBreakEnabled: settings.tieBreakEnabled
         ) {
             setWon(by: setWinner)
         }
     }
     
     private func setWon(by team: Team) {
-        setWinner = team
-        HapticManager.setWin()
-        match.sets.append(SetScore())
+        presentationState.showSetWinner(team)
+        HapticsManager.setWin()
+        matchState.score.sets.append(SetScore())
     }
     
     private func resetGamePoints() {
-        match.currentGame = GamePoints()
-        serve.side = .deuce
+        matchState.score.currentGame = GamePoints()
+        matchState.serve.side = .deuce
     }
     
     private func incrementGame(for team: Team) {
-        let index = match.sets.count - 1
-        
+        let index = currentSetIndex
         switch team {
         case .us:
-            match.sets[index].us += 1
+            matchState.score.sets[index].us += 1
         case .them:
-            match.sets[index].them += 1
+            matchState.score.sets[index].them += 1
         }
     }
     
     private func rotateServer() {
-        serve = ServeRules.nextServer(afterGame: serve)
+        matchState.serve = ServeRules.nextServer(afterGame: matchState.serve)
         swapPositions.toggle()
     }
     
-    // MARK: - Convenience accessors
-    private var currentSet: SetScore {
-        if match.sets.isEmpty {
-            match.sets.append(SetScore())
+    // MARK: - Private Helpers
+    
+    private var currentSetIndex: Int {
+        if matchState.score.sets.isEmpty {
+            matchState.score.sets.append(SetScore())
         }
-        return match.sets[match.sets.count - 1]
+        return matchState.score.sets.count - 1
     }
+    
+    private var currentSet: SetScore {
+        matchState.score.sets[currentSetIndex]
+    }
+}
 
+// MARK: - Convenience Extensions
+
+extension MatchViewModel {
+    /// Convenience initializer for testing
+    convenience init(
+        goldenPointEnabled: Bool = false,
+        tieBreakEnabled: Bool = false
+    ) {
+        let settings = MatchSettings(
+            goldenPointEnabled: goldenPointEnabled,
+            tieBreakEnabled: tieBreakEnabled
+        )
+        self.init(settings: settings)
+    }
 }

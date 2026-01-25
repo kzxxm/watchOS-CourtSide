@@ -13,6 +13,7 @@ struct ScoreView: View {
     let onUndo: () -> Void
     let match: MatchScore
     let swapPositions: Bool
+    let goldenPointEnabled: Bool
     
     var body: some View {
         VStack(spacing: 10) {
@@ -90,7 +91,7 @@ struct ScoreView: View {
             .point(
                 points: points,
                 opponentPoints: opponent,
-                goldenPointEnabled: false // can be injected later
+                goldenPointEnabled: goldenPointEnabled
             )
             .rawValue
     }
@@ -103,5 +104,6 @@ struct ScoreView: View {
         onUndo: {},
         match: MatchScore(),
         swapPositions: false,
+        goldenPointEnabled: false
     )
 }

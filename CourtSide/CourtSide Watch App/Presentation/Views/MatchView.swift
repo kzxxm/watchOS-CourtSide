@@ -20,7 +20,8 @@ struct MatchView: View {
                     onThemPoint: { viewModel.pointWon(by: .them) },
                     onUndo: { viewModel.undo() },
                     match: viewModel.match,
-                    swapPositions: viewModel.swapPositions
+                    swapPositions: viewModel.swapPositions,
+                    goldenPointEnabled: viewModel.goldenPointEnabled
                 )
                 
                 ServeIndicatorView(serve: viewModel.serve)

@@ -14,11 +14,6 @@ struct ScoreFormatter {
         goldenPointEnabled: Bool
     ) -> DisplayPoint {
         
-        // Golden point deuce logic
-        if goldenPointEnabled && points == 3 && opponentPoints == 3 {
-            return .forty
-        }
-        
         // Deuce/Advantage
         if points >= 3 && opponentPoints >= 3 {
             if points == opponentPoints {

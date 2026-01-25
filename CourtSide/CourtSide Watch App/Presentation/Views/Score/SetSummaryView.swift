@@ -117,7 +117,7 @@ struct SetSummaryCard: View {
 #Preview {
     SetSummaryView(
         completedSets: {
-            var m = [
+            let m = [
                 SetScore(us: 6, them: 2),
                 SetScore(us: 4, them: 6)
             ]

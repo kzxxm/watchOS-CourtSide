@@ -7,16 +7,19 @@
 
 import WatchKit
 
-class HapticManager {
-    static let shared = HapticManager()
+class HapticsManager {
+    static let shared = HapticsManager()
     
     private init() {}
     
     static func gameWin() {
         WKInterfaceDevice.current().play(.click)
+        print("(HapticManager) Game completion haptic triggered")
     }
     
     static func setWin() {
         WKInterfaceDevice.current().play(.success)
+        print("(HapticManager) Set completion haptic triggered")
+
     }
 }
