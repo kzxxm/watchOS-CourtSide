@@ -12,6 +12,7 @@ struct ScoreView: View {
     let onThemPoint: () -> Void
     let onUndo: () -> Void
     let match: MatchScore
+    let serve: ServeState
     let swapPositions: Bool
     let goldenPointEnabled: Bool
     
@@ -64,15 +65,40 @@ struct ScoreView: View {
                         .frame(height: 80)
                     
                     VStack {
-                        Text(team == .us ? "US" : "THEM")
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(team == .us ? Color.blue : Color.orange)
+                        HStack {
+                            Text(team == .us ? "US" : "THEM")
+                                .font(.system(size: 12))
+                                .fontWeight(.semibold)
+                                .foregroundStyle(team == .us ? Color.blue : Color.orange)
+                            
+                            Spacer()
+                        }
+                        .padding(.top)
+                        .padding(.horizontal)
+                        
+                        Spacer()
                         
                         Text("\(gameScore(for: team))")
-                            .font(.title)
+                            .font(.system(size: 40))
                             .fontWeight(.bold)
                             .animation(.linear)
+                        
+                        Spacer()
+                        Spacer()
+                    }
+                }
+                .overlay {
+                    VStack {
+                        HStack {
+                            Spacer()
+                            
+                            if serve.servingTeam == team {
+                                ServeIndicatorView(serve: serve)
+                                    .padding(.top, 10)
+                                    .padding(.trailing)
+                            }
+                        }
+                        Spacer()
                     }
                 }
             }
@@ -103,6 +129,7 @@ struct ScoreView: View {
         onThemPoint: {},
         onUndo: {},
         match: MatchScore(),
+        serve: ServeState(servingTeam: .us, serverIndex: 0, side: .deuce),
         swapPositions: false,
         goldenPointEnabled: false
     )

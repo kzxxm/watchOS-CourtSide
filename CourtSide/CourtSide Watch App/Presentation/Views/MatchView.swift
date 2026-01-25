@@ -20,11 +20,10 @@ struct MatchView: View {
                     onThemPoint: { viewModel.pointWon(by: .them) },
                     onUndo: { viewModel.undo() },
                     match: viewModel.match,
+                    serve: viewModel.serve,
                     swapPositions: viewModel.swapPositions,
                     goldenPointEnabled: viewModel.settings.goldenPointEnabled
                 )
-                
-                ServeIndicatorView(serve: viewModel.serve)
             }
             
             // Auto-dismissing game win overlay
