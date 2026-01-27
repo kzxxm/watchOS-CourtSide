@@ -14,8 +14,7 @@ struct MatchView: View {
         ZStack {
             VStack {
                 HStack {
-                    // TODO: Implement SettingsView (see comments in placeholder file)
-                    SettingsButton(onSettings: {})
+                    SettingsButton(onSettings: viewModel.presentSettings )
                     Spacer()
                 }
                 
@@ -28,7 +27,9 @@ struct MatchView: View {
                     match: viewModel.match,
                     serve: viewModel.serve,
                     swapPositions: viewModel.swapPositions,
-                    goldenPointEnabled: viewModel.settings.goldenPointEnabled
+                    goldenPointEnabled: viewModel.settings.goldenPointEnabled,
+                    usColor: viewModel.settings.team1Color,
+                    themColor: viewModel.settings.team2Color
                 )
                 
                 UndoResetButton(
@@ -40,7 +41,11 @@ struct MatchView: View {
             
             // Auto-dismissing game win overlay
             if let gameWinner = viewModel.gameWinner {
-                GameWinOverlay(winner: gameWinner)
+                GameWinOverlay(
+                    winner: gameWinner,
+                    usColor: viewModel.settings.team1Color,
+                    themColor: viewModel.settings.team2Color
+                )
                     .transition(.opacity)
                     .zIndex(1)
                     .onTapGesture(perform: viewModel.dismissGameWinner)
@@ -48,7 +53,10 @@ struct MatchView: View {
             
             // Serve selection overlay at start
             if viewModel.needsServeSelection {
-                ServeSelectionView { team in
+                ServeSelectionView(
+                    usColor: viewModel.settings.team1Color,
+                    themColor: viewModel.settings.team2Color,
+                ) { team in
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                         viewModel.selectInitialServer(team: team)
                     }
@@ -63,20 +71,33 @@ struct MatchView: View {
             set: { if !$0 { viewModel.dismissSetWinner() } }
         )) {
             if let winner = viewModel.setWinner {
-                SetWinOverlay(winner: winner) {
+                SetWinOverlay(
+                    usColor: viewModel.settings.team1Color,
+                    themColor: viewModel.settings.team2Color,
+                    winner: winner
+                ) {
                     viewModel.dismissSetWinner()
                 }
             }
         }
-        
+        // Set summary sheet
         .sheet(isPresented: Binding(
             get: { viewModel.showSetSummary },
             set: { if !$0 { viewModel.dismissSetSummary() } }
         )) {
             SetSummaryView(
                 completedSets: viewModel.completedSets,
-                onContinue: viewModel.dismissSetSummary
+                onContinue: viewModel.dismissSetSummary,
+                usColor: viewModel.settings.team1Color,
+                themColor: viewModel.settings.team2Color
             )
+        }
+        // Settings sheet
+        .sheet(isPresented: Binding(
+            get: { viewModel.showSettings },
+            set: { _ in viewModel.dismissSettings() }
+        )) {
+            SettingsView(settings: viewModel.settings)
         }
     }
 }

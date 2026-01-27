@@ -15,6 +15,8 @@ struct ScoreView: View {
     let serve: ServeState
     let swapPositions: Bool
     let goldenPointEnabled: Bool
+    let usColor: Color
+    let themColor: Color
     
     var body: some View {
         VStack(spacing: 10) {
@@ -46,7 +48,7 @@ struct ScoreView: View {
             } label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill((team == .us ? Color.blue : Color.orange).opacity(0.2))
+                        .fill((team == .us ? usColor : themColor).opacity(0.2))
                         .frame(height: 80)
                     
                     VStack {
@@ -54,7 +56,7 @@ struct ScoreView: View {
                             Text(team == .us ? "US" : "THEM")
                                 .font(.system(size: 12))
                                 .fontWeight(.semibold)
-                                .foregroundStyle(team == .us ? Color.blue : Color.orange)
+                                .foregroundStyle(team == .us ? usColor : themColor)
                             
                             Spacer()
                         }
@@ -116,6 +118,8 @@ struct ScoreView: View {
         match: MatchScore(),
         serve: ServeState(servingTeam: .us, serverIndex: 0, side: .deuce),
         swapPositions: false,
-        goldenPointEnabled: false
+        goldenPointEnabled: false,
+        usColor: .blue,
+        themColor: .orange
     )
 }

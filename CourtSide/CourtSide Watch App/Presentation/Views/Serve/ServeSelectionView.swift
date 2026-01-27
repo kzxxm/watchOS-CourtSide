@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct ServeSelectionView: View {
+    let usColor: Color
+    let themColor: Color
     let onSelectTeam: (Team) -> Void
     
     @State private var scale: CGFloat = 0.8
@@ -42,12 +44,12 @@ struct ServeSelectionView: View {
                                 .font(.headline)
                         }
                         .frame(width: 70, height: 90)
-                        .background(Color.blue.opacity(0.2))
-                        .foregroundStyle(.blue)
+                        .background(usColor.opacity(0.2))
+                        .foregroundStyle(usColor)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.blue, lineWidth: 2)
+                                .stroke(usColor, lineWidth: 2)
                         )
                     }
                     .buttonStyle(.plain)
@@ -64,12 +66,12 @@ struct ServeSelectionView: View {
                                 .font(.headline)
                         }
                         .frame(width: 70, height: 90)
-                        .background(Color.orange.opacity(0.2))
-                        .foregroundStyle(.orange)
+                        .background(themColor.opacity(0.2))
+                        .foregroundStyle(themColor)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.orange, lineWidth: 2)
+                                .stroke(themColor, lineWidth: 2)
                         )
                     }
                     .buttonStyle(.plain)
@@ -91,7 +93,9 @@ struct ServeSelectionView: View {
 }
 
 #Preview {
-    ServeSelectionView { team in
-        print("Selected: \(team)")
-    }
+    ServeSelectionView(
+        usColor: .blue,
+        themColor: .orange,
+        onSelectTeam: { _ in }
+    )
 }

@@ -12,7 +12,6 @@ struct ServeIndicatorView: View {
     
     var body: some View {
         HStack {
-//            Image(systemName: "figure.tennis")
             Image(systemName: serve.arrow(for: serve.side))
                 .contentTransition(.symbolEffect(.replace))
         }

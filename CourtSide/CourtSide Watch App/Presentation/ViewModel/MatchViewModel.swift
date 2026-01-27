@@ -55,17 +55,20 @@ struct PresentationState {
     var setWinner: Team?
     var showSetSummary: Bool
     var needsServeSelection: Bool
+    var showSettings: Bool
     
     init(
         gameWinner: Team? = nil,
         setWinner: Team? = nil,
         showSetSummary: Bool = false,
-        needsServeSelection: Bool = true
+        needsServeSelection: Bool = true,
+        showSettings: Bool = false
     ) {
         self.gameWinner = gameWinner
         self.setWinner = setWinner
         self.showSetSummary = showSetSummary
         self.needsServeSelection = needsServeSelection
+        self.showSettings = showSettings
     }
     
     mutating func dismissGameWinner() {
@@ -89,23 +92,85 @@ struct PresentationState {
     mutating func completeServeSelection() {
         needsServeSelection = false
     }
+    
+    mutating func presentSettings() {
+        showSettings = true
+    }
+    
+    mutating func dismissSettings() {
+        showSettings = false
+    }
 }
 
 // MARK: - Settings
 
+enum DefaultsKey: String {
+    case goldenPointEnabled = "goldenPoint"
+    case tieBreakEnabled = "tieBreak"
+    case team1Color = "team1Color"
+    case team2Color = "team2Color"
+    case selectedTheme = "selectedTheme"
+}
+
 @Observable
 final class MatchSettings {
-    var goldenPointEnabled: Bool
-    var tieBreakEnabled: Bool
+    @ObservationIgnored
+    @AppStorage(DefaultsKey.goldenPointEnabled.rawValue) var goldenPointEnabled = false
     
-    init(goldenPointEnabled: Bool = false, tieBreakEnabled: Bool = false) {
-        self.goldenPointEnabled = goldenPointEnabled
-        self.tieBreakEnabled = tieBreakEnabled
-    }
+    @ObservationIgnored
+    @AppStorage(DefaultsKey.tieBreakEnabled.rawValue) var tieBreakEnabled = false
     
-    // Future: Add UserDefaults integration
-    // @ObservationIgnored
-    // @AppStorage("goldenPointEnabled") var goldenPointEnabled = false
+    @ObservationIgnored
+    @AppStorage(DefaultsKey.team1Color.rawValue) private var _team1Color = Color.blue
+    
+    @ObservationIgnored
+    @AppStorage(DefaultsKey.team2Color.rawValue) private var _team2Color = Color.orange
+    
+    @ObservationIgnored
+    @AppStorage(DefaultsKey.selectedTheme.rawValue) private var _selectedThemeRawValue = TeamColor.blueOrange.rawValue
+    
+    // Observable properties that manually trigger updates
+        var team1Color: Color {
+            get {
+                access(keyPath: \.team1Color)
+                return _team1Color
+            }
+            set {
+                withMutation(keyPath: \.team1Color) {
+                    _team1Color = newValue
+                }
+            }
+        }
+        
+        var team2Color: Color {
+            get {
+                access(keyPath: \.team2Color)
+                return _team2Color
+            }
+            set {
+                withMutation(keyPath: \.team2Color) {
+                    _team2Color = newValue
+                }
+            }
+        }
+        
+        var selectedTheme: TeamColor {
+            get {
+                access(keyPath: \.selectedTheme)
+                return TeamColor(rawValue: _selectedThemeRawValue) ?? .blueOrange
+            }
+            set {
+                withMutation(keyPath: \.selectedTheme) {
+                    _selectedThemeRawValue = newValue.rawValue
+                    _team1Color = newValue.team1Color
+                    _team2Color = newValue.team2Color
+                }
+            }
+        }
+        
+        func applyTheme(_ theme: TeamColor) {
+            selectedTheme = theme
+        }
 }
 
 // MARK: - Animation Timings
@@ -145,6 +210,10 @@ final class MatchViewModel {
     
     var showSetSummary: Bool {
         presentationState.showSetSummary
+    }
+    
+    var showSettings: Bool {
+        presentationState.showSettings
     }
     
     var needsServeSelection: Bool {
@@ -223,6 +292,10 @@ final class MatchViewModel {
         swapPositions = false
     }
     
+    func presentSettings() {
+        presentationState.presentSettings()
+    }
+    
     func dismissGameWinner() {
         presentationState.dismissGameWinner()
     }
@@ -233,6 +306,14 @@ final class MatchViewModel {
     
     func dismissSetSummary() {
         presentationState.dismissSetSummary()
+    }
+    
+    func dismissSettings() {
+        presentationState.dismissSettings()
+    }
+    
+    func changeTeamColors(to theme: TeamColor) {
+        settings.applyTheme(theme)
     }
     
     // MARK: - Private Game Logic
@@ -324,21 +405,5 @@ final class MatchViewModel {
     
     private var currentSet: SetScore {
         matchState.score.sets[currentSetIndex]
-    }
-}
-
-// MARK: - Convenience Extensions
-
-extension MatchViewModel {
-    // Convenience initializer for testing
-    convenience init(
-        goldenPointEnabled: Bool = false,
-        tieBreakEnabled: Bool = false
-    ) {
-        let settings = MatchSettings(
-            goldenPointEnabled: goldenPointEnabled,
-            tieBreakEnabled: tieBreakEnabled
-        )
-        self.init(settings: settings)
     }
 }

@@ -9,6 +9,9 @@ import SwiftUI
 
 struct GameWinOverlay: View {
     let winner: Team
+    let usColor: Color
+    let themColor: Color
+    
     @State private var scale: CGFloat = 0.5
     @State private var opacity: Double = 0
     @State private var rotation: Double = -10
@@ -16,7 +19,7 @@ struct GameWinOverlay: View {
     var body: some View {
         ZStack {
             // Background with team color
-            (winner == .us ? Color.blue : Color.orange)
+            (winner == .us ? usColor : themColor)
                 .ignoresSafeArea()
                 .opacity(opacity * 0.95)
             
@@ -50,13 +53,17 @@ struct GameWinOverlay: View {
 
 #Preview("Home Win") {
     GameWinOverlay(
-        winner: .us
+        winner: .us,
+        usColor: .blue,
+        themColor: .orange
     )
 }
 
 #Preview("Away Win") {
     GameWinOverlay(
-        winner: .them
+        winner: .them,
+        usColor: .blue,
+        themColor: .orange
     )
 }
 

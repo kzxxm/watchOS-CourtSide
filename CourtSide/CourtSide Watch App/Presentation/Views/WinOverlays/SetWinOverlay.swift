@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SetWinOverlay: View {
+    let usColor: Color
+    let themColor: Color
     let winner: Team
     let onContinue: () -> Void
     
@@ -17,9 +19,10 @@ struct SetWinOverlay: View {
     @State private var showSummary = false
     
     var body: some View {
-        if showSummary {
+//        if showSummary {
             
-        } else {
+//        } else {
+        if !showSummary {
             ZStack {
                 // Background with team color
                 (winner == .us ? Color.blue : Color.orange)
@@ -70,9 +73,9 @@ struct SetWinOverlay: View {
 }
 
 #Preview {
-    SetWinOverlay(winner: .us, onContinue: {})
+    SetWinOverlay(usColor: .blue, themColor: .orange, winner: .us, onContinue: {})
 }
 
 #Preview {
-    SetWinOverlay(winner: .them, onContinue: {})
+    SetWinOverlay(usColor: .blue, themColor: .orange, winner: .them, onContinue: {})
 }
