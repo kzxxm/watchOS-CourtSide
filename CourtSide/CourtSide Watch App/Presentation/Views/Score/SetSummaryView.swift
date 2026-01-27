@@ -39,8 +39,7 @@ struct SetSummaryView: View {
                         .padding()
                         .foregroundStyle(.white)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.blue)
+                .buttonStyle(.glass)
                 .padding(.horizontal)
             }
         }

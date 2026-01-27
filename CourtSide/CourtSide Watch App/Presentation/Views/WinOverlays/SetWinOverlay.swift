@@ -25,7 +25,7 @@ struct SetWinOverlay: View {
         if !showSummary {
             ZStack {
                 // Background with team color
-                (winner == .us ? Color.blue : Color.orange)
+                (winner == .us ? usColor : themColor)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
@@ -49,7 +49,7 @@ struct SetWinOverlay: View {
                             .font(.caption2)
                             .padding(.horizontal, 40)
                             .padding(.vertical, 12)
-                            .foregroundStyle(winner == .us ? Color.blue : Color.orange)
+                            .foregroundStyle(winner == .us ? usColor : themColor)
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.white)

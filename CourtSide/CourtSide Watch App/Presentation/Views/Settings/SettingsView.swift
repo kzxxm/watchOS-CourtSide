@@ -15,20 +15,6 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section {
-                Toggle("Golden Point", isOn: $settings.goldenPointEnabled)
-                Toggle("Tie Break", isOn: $settings.tieBreakEnabled)
-            } header: {
-                Text("Match Rules")
-                    .padding(.vertical, 2)
-            } footer: {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("**Golden Point:**  When enabled, deuce games are decided by a single decisive point instead of requiring a 2-point advantage.")
-                    Text("**Tie Break:**  When enabled, sets can be won with tie-breaks at 6-6.")
-                }
-                .padding(.vertical)
-            }
-            
-            Section {
                 Button {
                     showColorPicker = true
                 } label: {
@@ -48,6 +34,20 @@ struct SettingsView: View {
                 }
             } header: {
                 Text("Team Colors")
+            }
+            
+            Section {
+                Toggle("Golden Point", isOn: $settings.goldenPointEnabled)
+                Toggle("Tie Break", isOn: $settings.tieBreakEnabled)
+            } header: {
+                Text("Match Rules")
+                    .padding(.vertical, 2)
+            } footer: {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("**Golden Point:**  When enabled, deuce games are decided by a single decisive point instead of requiring a 2-point advantage.")
+                    Text("**Tie Break:**  When enabled, sets can be won with tie-breaks at 6-6.")
+                }
+                .padding(.vertical)
             }
         }
         .sheet(isPresented: $showColorPicker) {
