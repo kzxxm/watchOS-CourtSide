@@ -278,6 +278,8 @@ final class MatchViewModel {
             serverIndex: 0,
             side: .deuce
         )
+        
+        swapPositions = matchState.serve.servingTeam == .us ? false : true
         presentationState.completeServeSelection()
     }
     
