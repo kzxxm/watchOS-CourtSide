@@ -9,177 +9,6 @@ import Foundation
 import Observation
 import SwiftUI
 
-// MARK: - Match State (Pure Data)
-
-struct MatchState {
-    var score: MatchScore
-    var serve: ServeState
-    var history: [(MatchScore, ServeState)]
-    
-    init(
-        score: MatchScore = MatchScore(),
-        serve: ServeState = ServeState(servingTeam: .us, serverIndex: 0, side: .deuce),
-        history: [(MatchScore, ServeState)] = []
-    ) {
-        self.score = score
-        self.serve = serve
-        self.history = history
-    }
-    
-    mutating func saveSnapshot() {
-        history.append((score, serve))
-        // Limit history size to prevent memory issues
-        if history.count > 50 {
-            history.removeFirst()
-        }
-    }
-    
-    mutating func restoreLastSnapshot() -> Bool {
-        guard let last = history.popLast() else { return false }
-        score = last.0
-        serve = last.1
-        return true
-    }
-    
-    mutating func reset() {
-        score = MatchScore()
-        serve = ServeState(servingTeam: .us, serverIndex: 0, side: .deuce)
-        history.removeAll()
-    }
-}
-
-// MARK: - Presentation State (UI-specific)
-
-struct PresentationState {
-    var gameWinner: Team?
-    var setWinner: Team?
-    var showSetSummary: Bool
-    var needsServeSelection: Bool
-    var showSettings: Bool
-    
-    init(
-        gameWinner: Team? = nil,
-        setWinner: Team? = nil,
-        showSetSummary: Bool = false,
-        needsServeSelection: Bool = true,
-        showSettings: Bool = false
-    ) {
-        self.gameWinner = gameWinner
-        self.setWinner = setWinner
-        self.showSetSummary = showSetSummary
-        self.needsServeSelection = needsServeSelection
-        self.showSettings = showSettings
-    }
-    
-    mutating func dismissGameWinner() {
-        gameWinner = nil
-    }
-    
-    mutating func showSetWinner(_ team: Team) {
-        setWinner = team
-    }
-    
-    mutating func dismissSetWinner() {
-        setWinner = nil
-        showSetSummary = true
-    }
-    
-    mutating func dismissSetSummary() {
-        showSetSummary = false
-        needsServeSelection = true
-    }
-    
-    mutating func completeServeSelection() {
-        needsServeSelection = false
-    }
-    
-    mutating func presentSettings() {
-        showSettings = true
-    }
-    
-    mutating func dismissSettings() {
-        showSettings = false
-    }
-}
-
-// MARK: - Settings
-
-enum DefaultsKey: String {
-    case goldenPointEnabled = "goldenPoint"
-    case tieBreakEnabled = "tieBreak"
-    case team1Color = "team1Color"
-    case team2Color = "team2Color"
-    case selectedTheme = "selectedTheme"
-}
-
-@Observable
-final class MatchSettings {
-    @ObservationIgnored
-    @AppStorage(DefaultsKey.goldenPointEnabled.rawValue) var goldenPointEnabled = false
-    
-    @ObservationIgnored
-    @AppStorage(DefaultsKey.tieBreakEnabled.rawValue) var tieBreakEnabled = false
-    
-    @ObservationIgnored
-    @AppStorage(DefaultsKey.team1Color.rawValue) private var _team1Color = Color.blue
-    
-    @ObservationIgnored
-    @AppStorage(DefaultsKey.team2Color.rawValue) private var _team2Color = Color.orange
-    
-    @ObservationIgnored
-    @AppStorage(DefaultsKey.selectedTheme.rawValue) private var _selectedThemeRawValue = TeamColor.blueOrange.rawValue
-    
-    // Observable properties that manually trigger updates
-        var team1Color: Color {
-            get {
-                access(keyPath: \.team1Color)
-                return _team1Color
-            }
-            set {
-                withMutation(keyPath: \.team1Color) {
-                    _team1Color = newValue
-                }
-            }
-        }
-        
-        var team2Color: Color {
-            get {
-                access(keyPath: \.team2Color)
-                return _team2Color
-            }
-            set {
-                withMutation(keyPath: \.team2Color) {
-                    _team2Color = newValue
-                }
-            }
-        }
-        
-        var selectedTheme: TeamColor {
-            get {
-                access(keyPath: \.selectedTheme)
-                return TeamColor(rawValue: _selectedThemeRawValue) ?? .blueOrange
-            }
-            set {
-                withMutation(keyPath: \.selectedTheme) {
-                    _selectedThemeRawValue = newValue.rawValue
-                    _team1Color = newValue.team1Color
-                    _team2Color = newValue.team2Color
-                }
-            }
-        }
-        
-        func applyTheme(_ theme: TeamColor) {
-            selectedTheme = theme
-        }
-}
-
-// MARK: - Animation Timings
-
-private enum AnimationTimings {
-    static let preWinDelay: Duration = .seconds(0.5)
-    static let winDisplayDuration: Duration = .seconds(3)
-}
-
 // MARK: - Main ViewModel
 
 @Observable
@@ -408,4 +237,11 @@ final class MatchViewModel {
     private var currentSet: SetScore {
         matchState.score.sets[currentSetIndex]
     }
+}
+
+// MARK: - Animation Timings
+
+private enum AnimationTimings {
+    static let preWinDelay: Duration = .seconds(0.5)
+    static let winDisplayDuration: Duration = .seconds(3)
 }
