@@ -83,6 +83,10 @@ CourtSide/
 - **Strategy Pattern** - Rule implementations (GameRules, SetRules, ServeRules)
 - **Snapshot Pattern** - History management for undo functionality
 
+## UI Breakdown
+
+<img width="1400" alt="UI Breakdonw" src="https://github.com/user-attachments/assets/80761446-61c0-4ad0-b673-6931737c3d4b" />
+
 ## Installation
 
 ### Requirements
