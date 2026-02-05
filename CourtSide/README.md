@@ -208,12 +208,11 @@ All themes are carefully chosen for optimal readability on Apple Watch displays.
 
 ## Screenshots
 
-<img src="Screenshots/serve-selector.png" alt="Serve Selector" width="300"/>
-<img src="Screenshots/main-view.png" alt="Main View" width="300"/>
-<img src="Screenshots/deuce.png" alt="Deuce" width="300"/>
-<img src="Screenshots/game-win.png" alt="Game Win" width="300"/>
-<img src="Screenshots/set-winner.png" alt="Set Win" width="300"/>
-<img src="Screenshots/summary-view.png" alt="Summary" width="300"/>
-<img src="Screenshots/reset-match.png" alt="Reset Match" width="300"/>
-<img src="Screenshots/settings.png" alt="Settings" width="300"/>
-<img src="Screenshots/color-selector.png" alt="Color Selector" width="300"/>
+| | | |
+| --- | --- | --- |
+| Serve Selector | Main View | Deuce |
+| <img src="Screenshots/serve-selector.png" alt="Serve Selector" width="300"/> | <img src="Screenshots/main-view.png" alt="Main View" width="300"/> | <img src="Screenshots/deuce-scenario.png" alt="Deuce" width="300"/> |
+| Game Win | Set Win | Set Summary |
+| <img src="Screenshots/game-win.png" alt="Game Win" height="350"/> | <img src="Screenshots/set-winner.png" alt="Set Win" width="300"/> | <img src="Screenshots/summary-view.png" alt="Summary" width="300"/> |
+| Reset Match | Settings | Color Selector |
+| <img src="Screenshots/reset-match.png" alt="Reset Match" width="300"/> | <img src="Screenshots/settings-view.png" alt="Settings" width="300"/> | <img src="Screenshots/color-selector.png" alt="Color Selector" width="300"/> |
