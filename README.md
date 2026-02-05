@@ -208,10 +208,11 @@ All themes are carefully chosen for optimal readability on Apple Watch displays.
 
 ## Screenshots
 
-<!-- Add screenshots of your app here -->
-<!-- Example:
-![Main View](screenshots/main-view.png)
-![Settings](screenshots/settings.png)
-![Game Win](screenshots/game-win.png)
--->
-
+| | | |
+| --- | --- | --- |
+| Serve Selector | Main View | Deuce |
+| <img src="Courtside/Screenshots/serve-selector.png" alt="Serve Selector" width="300"/> | <img src="Courtside/Screenshots/main-view.png" alt="Main View" width="300"/> | <img src="Courtside/Screenshots/deuce-scenario.png" alt="Deuce" width="300"/> |
+| Game Win | Set Win | Set Summary |
+| <img src="Courtside/Screenshots/game-win.png" alt="Game Win" height="350"/> | <img src="Courtside/Screenshots/set-winner.png" alt="Set Win" width="300"/> | <img src="Courtside/Screenshots/summary-view.png" alt="Summary" width="300"/> |
+| Reset Match | Settings | Color Selector |
+| <img src="Courtside/Screenshots/reset-match.png" alt="Reset Match" width="300"/> | <img src="Courtside/Screenshots/settings-view.png" alt="Settings" width="300"/> | <img src="Courtside/Screenshots/color-selector.png" alt="Color Selector" width="300"/> |
