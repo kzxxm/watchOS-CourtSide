@@ -208,10 +208,12 @@ All themes are carefully chosen for optimal readability on Apple Watch displays.
 
 ## Screenshots
 
-<!-- Add screenshots of your app here -->
-<!-- Example:
-![Main View](screenshots/main-view.png)
-![Settings](screenshots/settings.png)
-![Game Win](screenshots/game-win.png)
--->
-
+<img src="Screenshots/serve-selector.png" alt="Serve Selector" width="300"/>
+<img src="Screenshots/main-view.png" alt="Main View" width="300"/>
+<img src="Screenshots/deuce.png" alt="Deuce" width="300"/>
+<img src="Screenshots/game-win.png" alt="Game Win" width="300"/>
+<img src="Screenshots/set-winner.png" alt="Set Win" width="300"/>
+<img src="Screenshots/summary-view.png" alt="Summary" width="300"/>
+<img src="Screenshots/reset-match.png" alt="Reset Match" width="300"/>
+<img src="Screenshots/settings.png" alt="Settings" width="300"/>
+<img src="Screenshots/color-selector.png" alt="Color Selector" width="300"/>
